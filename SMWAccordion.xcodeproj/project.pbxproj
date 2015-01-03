@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		22C76F4F1A5864EE00D1B35F /* SMWAccordion.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */; };
-		22C76F511A5864EE00D1B35F /* SMWAccordion.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C76F501A5864EE00D1B35F /* SMWAccordion.m */; };
 		22C76F571A5864EE00D1B35F /* libSMWAccordion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */; };
+		22C76F731A58664F00D1B35F /* SMWAccordionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */; };
+		22C76F751A58669B00D1B35F /* SMWAccordionTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				22C76F751A58669B00D1B35F /* SMWAccordionTableView.h in CopyFiles */,
 				22C76F4F1A5864EE00D1B35F /* SMWAccordion.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,9 +40,10 @@
 /* Begin PBXFileReference section */
 		22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSMWAccordion.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMWAccordion.h; sourceTree = "<group>"; };
-		22C76F501A5864EE00D1B35F /* SMWAccordion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMWAccordion.m; sourceTree = "<group>"; };
 		22C76F561A5864EE00D1B35F /* SMWAccordionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SMWAccordionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		22C76F5C1A5864EE00D1B35F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMWAccordionTableView.h; sourceTree = "<group>"; };
+		22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMWAccordionTableView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +87,8 @@
 			isa = PBXGroup;
 			children = (
 				22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */,
-				22C76F501A5864EE00D1B35F /* SMWAccordion.m */,
+				22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */,
+				22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */,
 			);
 			path = SMWAccordion;
 			sourceTree = "<group>";
@@ -193,7 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22C76F511A5864EE00D1B35F /* SMWAccordion.m in Sources */,
+				22C76F731A58664F00D1B35F /* SMWAccordionTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +298,7 @@
 			buildSettings = {
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -303,6 +308,7 @@
 			buildSettings = {
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -356,6 +362,7 @@
 				22C76F611A5864EE00D1B35F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		22C76F621A5864EE00D1B35F /* Build configuration list for PBXNativeTarget "SMWAccordionTests" */ = {
 			isa = XCConfigurationList;
@@ -364,6 +371,7 @@
 				22C76F641A5864EE00D1B35F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
