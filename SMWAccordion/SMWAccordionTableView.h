@@ -6,26 +6,17 @@
 //  Copyright (c) 2015 Sam Meech-Ward. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-@class SMWAccordionTableView;
-
-@protocol SMWAccordionTableViewDelegate <NSObject, UIScrollViewDelegate, UITableViewDelegate>
-
-@optional
-
-// Called before any accordion animations
-- (UIView *)accordionView:(SMWAccordionTableView *)accordionView contentViewForRowAtIndexPath:(NSIndexPath *)indexPath;
-
-@end
-
-
+#import "SMWAccordionTableViewDelegateObject.h"
+#import "SMWAccordionTableViewDataSourceObject.h"
 
 @interface SMWAccordionTableView : UITableView
 
 @property (nonatomic) BOOL shouldAnimate;
 
-@property (nonatomic, assign) id<SMWAccordionTableViewDelegate>delegate;
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

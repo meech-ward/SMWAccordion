@@ -11,6 +11,10 @@
 		22C76F571A5864EE00D1B35F /* libSMWAccordion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */; };
 		22C76F731A58664F00D1B35F /* SMWAccordionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */; };
 		22C76F751A58669B00D1B35F /* SMWAccordionTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */; };
+		22DC610E1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DC610D1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m */; };
+		22DC61111A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DC61101A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.m */; };
+		22DC61121A59E67C00E3998F /* SMWAccordionTableViewDelegateObject.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22DC610C1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.h */; };
+		22DC61131A59E67C00E3998F /* SMWAccordionTableViewDataSourceObject.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22DC610F1A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +34,8 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				22DC61121A59E67C00E3998F /* SMWAccordionTableViewDelegateObject.h in CopyFiles */,
+				22DC61131A59E67C00E3998F /* SMWAccordionTableViewDataSourceObject.h in CopyFiles */,
 				22C76F751A58669B00D1B35F /* SMWAccordionTableView.h in CopyFiles */,
 				22C76F4F1A5864EE00D1B35F /* SMWAccordion.h in CopyFiles */,
 			);
@@ -44,6 +50,10 @@
 		22C76F5C1A5864EE00D1B35F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMWAccordionTableView.h; sourceTree = "<group>"; };
 		22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMWAccordionTableView.m; sourceTree = "<group>"; };
+		22DC610C1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMWAccordionTableViewDelegateObject.h; sourceTree = "<group>"; };
+		22DC610D1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMWAccordionTableViewDelegateObject.m; sourceTree = "<group>"; };
+		22DC610F1A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMWAccordionTableViewDataSourceObject.h; sourceTree = "<group>"; };
+		22DC61101A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMWAccordionTableViewDataSourceObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +99,10 @@
 				22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */,
 				22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */,
 				22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */,
+				22DC610C1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.h */,
+				22DC610D1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m */,
+				22DC610F1A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.h */,
+				22DC61101A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.m */,
 			);
 			path = SMWAccordion;
 			sourceTree = "<group>";
@@ -197,6 +211,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22DC61111A59D35600E3998F /* SMWAccordionTableViewDataSourceObject.m in Sources */,
+				22DC610E1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m in Sources */,
 				22C76F731A58664F00D1B35F /* SMWAccordionTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
