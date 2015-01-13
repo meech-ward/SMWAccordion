@@ -46,9 +46,11 @@
     [self.accordionView tableView:tableView didEndDisplayingCell:cell forRowAtIndexPath:indexPath];
 }
 
-//- (void)tableView:(UITableView *)tableView didEndDisplayingHeaderView:(UIView *)view forSection:(NSInteger)section {
-//    // Optional
-//}
+- (void)tableView:(UITableView *)tableView didEndDisplayingHeaderView:(UIView *)view forSection:(NSInteger)section {
+    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingFooterView:forSection:)]) {
+        [self.delegate tableView:tableView didEndDisplayingHeaderView:view forSection:section];
+    }
+}
 //
 //- (void)tableView:(UITableView *)tableView didEndDisplayingFooterView:(UIView *)view forSection:(NSInteger)section {
 //    // Optional
@@ -61,20 +63,43 @@
 //    // Optional
 //}
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:didSelectRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView didSelectRowAtIndexPath:indexPath];
-    }
-}
 
-//- (NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSInxdexPath *)indexPath {
-//    // Optional
+//- (BOOL)respondsToSelector:(SEL)aSelector {
+////    if ([super respondsToSelector:aSelector]) {
+////        return YES;
+////    }
+////    
+////    if ([self.delegate respondsToSelector:aSelector]) {
+////        [self.accordionView setRealDelegate:self.delegate];
+////        [self performSelector:@selector(setSelfAsDelegate) withObject:nil afterDelay:0.0];
+////        return YES;
+//////        // Perform the selector
+//////        [self.delegate performSelector:aSelector];
+//////        ((void (*)(id, SEL))[(NSObject *)self.delegate methodForSelector:aSelector])(self.delegate, aSelector);
+////    }
+////    return NO;
+//    return YES;
+//}
+////
+////- (void)setSelfAsDelegate {
+////    [self.accordionView setRealDelegate:self];
+////}
+//
+////void dynamicMethodIMP(id self, SEL _cmd) {
+////    // implementation ....
+////}
+////
+////
+//+ (BOOL) resolveInstanceMethod:(SEL)aSEL {
+////{
+////    if (aSEL == @selector(resolveThisMethodDynamically))
+////    {
+////        class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, "v@:");
+////        return YES;
+////    }
+//    NSLog(@"RESolve instance method %@", aSEL);
+//    return [super resolveInstanceMethod:aSEL];
 //}
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:didDeselectRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView didDeselectRowAtIndexPath:indexPath];
-    }
-}
 
 @end

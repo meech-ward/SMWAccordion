@@ -18,6 +18,11 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
+@property (nonatomic, assign) id <SMWAccordionTableViewDataSource>dataSource;
+@property (nonatomic, assign) id <SMWAccordionTableViewDelegate>delegate;
+
+- (void)setRealDelegate:(id)delegate;
+
 @end
 
 

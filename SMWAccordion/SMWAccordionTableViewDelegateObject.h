@@ -16,7 +16,7 @@
 
 @interface SMWAccordionTableViewDelegateObject : NSObject <SMWAccordionTableViewDelegate>
 
-@property (nonatomic, assign) id<SMWAccordionTableViewDelegate>delegate;
+@property (nonatomic, weak) id<SMWAccordionTableViewDelegate>delegate;
 @property (nonatomic, weak) SMWAccordionTableView *accordionView;
 
 @end

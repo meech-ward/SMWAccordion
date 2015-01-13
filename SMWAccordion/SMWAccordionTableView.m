@@ -8,14 +8,8 @@
 
 #import "SMWAccordionTableView.h"
 
-void printFrame(CGRect frame) {
-    NSLog(@"x:%f, y:%f, width:%f, height:%f\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
-}
-
 @interface SMWAccordionTableView()
 
-@property (nonatomic, assign) id<SMWAccordionTableViewDelegate>delegate;
-@property (nonatomic, assign) id<SMWAccordionTableViewDataSource>dataSource;
 @property (nonatomic) SMWAccordionTableViewDelegateObject *delegateObject;
 //@property (nonatomic) SMWAccordionTableViewDataSourceObject *dataSourceObject;
 
@@ -60,6 +54,10 @@ void printFrame(CGRect frame) {
 
 #pragma mark - Delegate / Data Source
 
+- (void)setRealDelegate:(id)delegate {
+    [super setDelegate:delegate];
+}
+
 //- (void)setDataSource:(id<SMWAccordionTableViewDataSource>)dataSource {
 //    self.dataSourceObject.dataSource = dataSource;
 //}
@@ -69,9 +67,9 @@ void printFrame(CGRect frame) {
 - (void)setDelegate:(id<SMWAccordionTableViewDelegate>)delegate {
     self.delegateObject.delegate = delegate;
 }
-- (id<SMWAccordionTableViewDelegate>)delegate {
-    return self.delegateObject.delegate;
-}
+//- (id<SMWAccordionTableViewDelegate>)delegate {
+//    return self.delegateObject.delegate;
+//}
 
 //- (SMWAccordionTableViewDataSourceObject *)dataSourceObject {
 //    if (!_dataSourceObject) {
@@ -214,6 +212,8 @@ void printFrame(CGRect frame) {
             }
         }
     };
+    
+    // Todo adjust header and footer to move with cells
     
     void (^adjustContentOffset)(void) = ^{
         // Check if the content view fits on screen
