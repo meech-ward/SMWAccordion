@@ -195,6 +195,10 @@
 
 #pragma mark - Move Cells
 
+- (void)closeAccordionAnimated:(BOOL)aniamted {
+    [self moveCellsBackToSelectedCell:self.currentCell animated:aniamted completion:nil];
+}
+
 - (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
     
     // Create a block to move the cells

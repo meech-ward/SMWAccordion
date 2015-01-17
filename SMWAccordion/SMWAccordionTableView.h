@@ -15,6 +15,8 @@
 
 @property (nonatomic) BOOL shouldAnimate;
 
+- (void)closeAccordionAnimated:(BOOL)aniamted;
+
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
