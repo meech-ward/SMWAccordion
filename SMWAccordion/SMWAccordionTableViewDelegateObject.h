@@ -12,11 +12,18 @@
 
 @protocol SMWAccordionTableViewDelegate <NSObject, UIScrollViewDelegate, UITableViewDelegate>
 
+@optional
+- (void)accordionViewWillClose:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewDidClose:(SMWAccordionTableView *)accordionView;
+
+- (void)accordionViewWillOpen:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewDidOpen:(SMWAccordionTableView *)accordionView;
+
 @end
 
 @interface SMWAccordionTableViewDelegateObject : NSObject <SMWAccordionTableViewDelegate>
 
-@property (nonatomic, weak) id<SMWAccordionTableViewDelegate>delegate;
-@property (nonatomic, weak) SMWAccordionTableView *accordionView;
+@property (weak, nonatomic) id<SMWAccordionTableViewDelegate>delegate;
+@property (weak, nonatomic) SMWAccordionTableView *accordionView;
 
 @end

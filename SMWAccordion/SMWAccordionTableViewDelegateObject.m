@@ -101,5 +101,30 @@
 //    return [super resolveInstanceMethod:aSEL];
 //}
 
+#pragma mark - Open and close accordion
+
+- (void)accordionViewWillOpen:(SMWAccordionTableView *)accordionView {
+    if ([self.delegate respondsToSelector:@selector(accordionViewWillOpen:)]) {
+        [self.delegate accordionViewWillOpen:accordionView];
+    }
+}
+
+- (void)accordionViewDidOpen:(SMWAccordionTableView *)accordionView {
+    if ([self.delegate respondsToSelector:@selector(accordionViewDidOpen:)]) {
+        [self.delegate accordionViewDidOpen:accordionView];
+    }
+}
+
+- (void)accordionViewWillClose:(SMWAccordionTableView *)accordionView {
+    if ([self.delegate respondsToSelector:@selector(accordionViewWillClose:)]) {
+        [self.delegate accordionViewWillClose:accordionView];
+    }
+}
+
+- (void)accordionViewDidClose:(SMWAccordionTableView *)accordionView {
+    if ([self.delegate respondsToSelector:@selector(accordionViewDidClose:)]) {
+        [self.delegate accordionViewDidClose:accordionView];
+    }
+}
 
 @end

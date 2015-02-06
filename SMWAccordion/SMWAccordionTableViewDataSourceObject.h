@@ -22,7 +22,7 @@
 
 @interface SMWAccordionTableViewDataSourceObject : NSObject <SMWAccordionTableViewDataSource>
 
-@property (nonatomic, weak) id <SMWAccordionTableViewDataSource>dataSource;
-@property (nonatomic, weak) SMWAccordionTableView *accordionView;
+@property (weak, nonatomic) id <SMWAccordionTableViewDataSource>dataSource;
+@property (weak, nonatomic) SMWAccordionTableView *accordionView;
 
 @end

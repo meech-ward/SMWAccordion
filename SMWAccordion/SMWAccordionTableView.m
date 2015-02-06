@@ -10,13 +10,12 @@
 
 @interface SMWAccordionTableView()
 
-@property (nonatomic) SMWAccordionTableViewDelegateObject *delegateObject;
-//@property (nonatomic) SMWAccordionTableViewDataSourceObject *dataSourceObject;
+@property (strong, nonatomic) SMWAccordionTableViewDelegateObject *delegateObject;
+//@property (strong, nonatomic) SMWAccordionTableViewDataSourceObject *dataSourceObject;
 
-@property (nonatomic) UIView *currentContentView;
-@property (nonatomic) UITableViewCell *currentCell;
+@property (strong, nonatomic) UITableViewCell *currentCell;
 
-@property (nonatomic) NSMutableDictionary *removedIndexPaths;
+@property (strong, nonatomic) NSMutableDictionary *removedIndexPaths;
 
 @property (nonatomic) CGSize originContentSize;
 
@@ -164,7 +163,9 @@
     
     //
     // Modify the frame of the content view
-    [self insertSubview:self.currentContentView atIndex:0];
+    [self insertSubview:self.currentContentView atIndex:1]; // Set to one so that user interation is enabled
+    self.currentContentView.layer.zPosition = -1; // Set to minus one so that it appears under the cells
+//    [self addSubview:self.currentContentView];
     
     // Set the current cell
     self.currentCell = nextCell;
@@ -180,7 +181,8 @@
     self.currentContentView = [self.dataSource accordionView:self contentViewForRowAtIndexPath:indexPath];
     if (self.currentContentView) {
         // Insert with new frame
-        [self insertSubview:self.currentContentView atIndex:0];
+        [self insertSubview:self.currentContentView atIndex:1];
+        self.currentContentView.layer.zPosition = -1;
         self.currentContentView.frame = CGRectMake(cell.frame.origin.x, cell.frame.origin.y+cell.frame.size.height, self.currentContentView.bounds.size.width, self.currentContentView.bounds.size.height);
         
     }
@@ -197,9 +199,13 @@
 
 - (void)closeAccordionAnimated:(BOOL)aniamted {
     [self moveCellsBackToSelectedCell:self.currentCell animated:aniamted completion:nil];
+    [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:aniamted];
 }
 
 - (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+    
+    // Delegate
+    [self.delegate accordionViewWillOpen:self];
     
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
@@ -245,6 +251,8 @@
             // Adjust the content offset
             adjustContentOffset();
             if (completion) completion(finished);
+            // Delegate
+            [self.delegate accordionViewDidOpen:self];
         }];
     } else {
         // Move the cells
@@ -254,10 +262,16 @@
         // Completiom
         self.accordionIsOpen = YES;
         if (completion) completion(YES);
+        // Delegate
+        [self.delegate accordionViewDidOpen:self];
     }
 }
 
 - (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+    
+    // Delegate
+    [self.delegate accordionViewWillClose:self];
+    
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
 //
@@ -292,6 +306,8 @@
             [self endUpdates];
             self.accordionIsOpen = NO;
             if (completion) completion(finished);
+            // Delegate
+            [self.delegate accordionViewDidClose:self];
         }];
     } else {
         [self beginUpdates];
@@ -300,6 +316,8 @@
         [self endUpdates];
         self.accordionIsOpen = NO;
         if (completion) completion(YES);
+        // Delegate
+        [self.delegate accordionViewDidClose:self];
     }
     
 }
