@@ -200,6 +200,7 @@
 - (void)closeAccordionAnimated:(BOOL)aniamted {
     [self moveCellsBackToSelectedCell:self.currentCell animated:aniamted completion:nil];
     [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:aniamted];
+    self.currentCell = nil;
 }
 
 - (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
@@ -268,7 +269,7 @@
 }
 
 - (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
-    
+    animated = NO;
     // Delegate
     [self.delegate accordionViewWillClose:self];
     
@@ -352,7 +353,6 @@
         // Removed from the top
         offTheTop = YES;
     }
-    
     
     // Check if the current selected cell is leaving the screen
     if (cell == self.currentCell) {

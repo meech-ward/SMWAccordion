@@ -6,3 +6,5 @@
 //
 
 #import <SMWAccordion/SMWAccordionTableView.h>
+
+// Accordion Must be closed before you make call [AccordionTableView reloadData]
