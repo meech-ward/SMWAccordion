@@ -8,31 +8,42 @@
 
 @import UIKit;
 
+
+//
+// Delegate
+//
 #import "SMWAccordionTableViewDelegateObject.h"
-#import "SMWAccordionTableViewDataSourceObject.h"
+
+//
+// Data Source
+//
+@protocol SMWAccordionTableViewDataSource <NSObject, UITableViewDataSource>
+
+// Called before any accordion animations
+- (UIView *)accordionView:(SMWAccordionTableView *)accordionView contentViewForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
+
 
 @interface SMWAccordionTableView : UITableView
 
+// Should the accordion animate up and down to show the content view
 @property (nonatomic) BOOL shouldAnimate;
 
-//
-@property (strong, nonatomic) UIView *currentContentView;
+// The current content view being show, nil if no cells are selected
+@property (strong, nonatomic, readonly) UIView *currentContentView;
 
-//
+// Close the accordion
 - (void)closeAccordionAnimated:(BOOL)aniamted;
-- (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion;
-- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion;
+- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion;
 
-//
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+//- (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion;
+//- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion;
 
-//
+// Set the current table view delegate and datasource as accordion delegate and datasource
 @property (nonatomic, assign) id <SMWAccordionTableViewDataSource>dataSource;
 @property (nonatomic, assign) id <SMWAccordionTableViewDelegate>delegate;
-
-//
-- (void)setRealDelegate:(id)delegate;
 
 @end
 
