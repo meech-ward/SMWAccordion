@@ -11,119 +11,41 @@
 
 @implementation SMWAccordionTableViewDelegateObject
 
-#pragma mark - Table View
 
-#pragma mark Configuring Rows for the Table View
+#pragma mark - Message forwarding
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
-        return [self.delegate tableView:tableView heightForRowAtIndexPath:indexPath];
+// Override responds to selecter to return true if either the accordion view or delegate respond to the selector
+- (BOOL)respondsToSelector:(SEL)aSelector {
+    if ([self.accordionView respondsToSelector:aSelector] || [self.delegate respondsToSelector:aSelector]) {
+        return YES;
     }
-    return [self.accordionView rowHeight];
+    return NO;
 }
 
-//- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    // Optional
-//}
-
-//- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    // Optional
-//}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:willDisplayCell:forRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
+// Return a method signiture of the method identified by the selector
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {
+    NSMethodSignature* signature = [self.accordionView methodSignatureForSelector:aSelector];
+    if (!signature) {
+        signature = [(NSObject*)self.delegate methodSignatureForSelector:aSelector];
     }
-    [self.accordionView tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
+    return signature;
 }
 
-#pragma mark Tracking the Removal of Views
+// Catch any selectors not implemented on this object and perform them on the delegate and accordion
+// This method turns every protocol method into an optional method
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+    // Get the passed in selector
+    SEL selector = [anInvocation selector];
 
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingCell:forRowAtIndexPath:)]) {
-        [self.delegate tableView:tableView didEndDisplayingCell:cell forRowAtIndexPath:indexPath];
+    // Check if the accordion view has implemented the selector
+    if ([self.accordionView respondsToSelector:selector]) {
+        // Perform the selector on the accordion
+        [anInvocation invokeWithTarget:self.accordionView];
     }
-    [self.accordionView tableView:tableView didEndDisplayingCell:cell forRowAtIndexPath:indexPath];
-}
-
-- (void)tableView:(UITableView *)tableView didEndDisplayingHeaderView:(UIView *)view forSection:(NSInteger)section {
-    if ([self.delegate respondsToSelector:@selector(tableView:didEndDisplayingFooterView:forSection:)]) {
-        [self.delegate tableView:tableView didEndDisplayingHeaderView:view forSection:section];
-    }
-}
-//
-//- (void)tableView:(UITableView *)tableView didEndDisplayingFooterView:(UIView *)view forSection:(NSInteger)section {
-//    // Optional
-//}
-
-
-#pragma mark Managing Selections
-
-//- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    // Optional
-//}
-
-
-//- (BOOL)respondsToSelector:(SEL)aSelector {
-////    if ([super respondsToSelector:aSelector]) {
-////        return YES;
-////    }
-////    
-////    if ([self.delegate respondsToSelector:aSelector]) {
-////        [self.accordionView setRealDelegate:self.delegate];
-////        [self performSelector:@selector(setSelfAsDelegate) withObject:nil afterDelay:0.0];
-////        return YES;
-//////        // Perform the selector
-//////        [self.delegate performSelector:aSelector];
-//////        ((void (*)(id, SEL))[(NSObject *)self.delegate methodForSelector:aSelector])(self.delegate, aSelector);
-////    }
-////    return NO;
-//    return YES;
-//}
-////
-////- (void)setSelfAsDelegate {
-////    [self.accordionView setRealDelegate:self];
-////}
-//
-////void dynamicMethodIMP(id self, SEL _cmd) {
-////    // implementation ....
-////}
-////
-////
-//+ (BOOL) resolveInstanceMethod:(SEL)aSEL {
-////{
-////    if (aSEL == @selector(resolveThisMethodDynamically))
-////    {
-////        class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, "v@:");
-////        return YES;
-////    }
-//    NSLog(@"RESolve instance method %@", aSEL);
-//    return [super resolveInstanceMethod:aSEL];
-//}
-
-#pragma mark - Open and close accordion
-
-- (void)accordionViewWillOpen:(SMWAccordionTableView *)accordionView {
-    if ([self.delegate respondsToSelector:@selector(accordionViewWillOpen:)]) {
-        [self.delegate accordionViewWillOpen:accordionView];
-    }
-}
-
-- (void)accordionViewDidOpen:(SMWAccordionTableView *)accordionView {
-    if ([self.delegate respondsToSelector:@selector(accordionViewDidOpen:)]) {
-        [self.delegate accordionViewDidOpen:accordionView];
-    }
-}
-
-- (void)accordionViewWillClose:(SMWAccordionTableView *)accordionView {
-    if ([self.delegate respondsToSelector:@selector(accordionViewWillClose:)]) {
-        [self.delegate accordionViewWillClose:accordionView];
-    }
-}
-
-- (void)accordionViewDidClose:(SMWAccordionTableView *)accordionView {
-    if ([self.delegate respondsToSelector:@selector(accordionViewDidClose:)]) {
-        [self.delegate accordionViewDidClose:accordionView];
+    // Check if the delegate view has implemented the selector
+    if ([self.delegate respondsToSelector:selector]) {
+        // Perform the selector on the delegate
+        [anInvocation invokeWithTarget:self.delegate];
     }
 }
 
