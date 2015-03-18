@@ -142,9 +142,6 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
             }];
         }
     }
-    
-    // Set the current cell
-    self.currentCell = nextCell;
 }
 
 #pragma mark - Content View
@@ -172,6 +169,27 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 }
 
 #pragma mark - Move Cells
+
+
+- (void)adjustVisibleCellsUnderCell:(UITableViewCell *)cell frame:(CGRect (^)(UITableViewCell *currentCell, UITableViewCell *previousCell))getFrame {
+    // Loop through all the visible cells, top to bottom, and move all the cells below the selected cell down to make room for the content view
+    // Create a variable that is true when the loop passes the currently selected cell
+    BOOL passed = NO;
+    UITableViewCell *previousCell;
+    
+    // Loop through the cells and move as needed
+    for (UITableViewCell *visCell in self.visibleCells) {
+        if (passed) {
+            // The loop has passed the selected cell so move the current cell down
+            visCell.frame = getFrame(visCell, previousCell);
+        } else if (visCell == cell) {
+            // The current cell is the selected cell
+            // The next itteration of this loop will move on to the next cell
+            passed = YES;
+        }
+        previousCell = visCell;
+    }
+}
 
 #pragma mark Close
 
@@ -208,27 +226,17 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
-        // Loop through all the visible cells, top to bottom, and move all the cells below the selected cell down to make room for the content view
-        // Create a variable that is true when the loop passes the currently selected cell
-        BOOL passed = NO;
-        UITableViewCell *lastCell;
         
-        // Loop through the cells and move as needed
-        for (UITableViewCell *visCell in self.visibleCells) {
-            if (passed) {
-                // The loop has passed the selected cell so move the current cell down
-                visCell.frame = CGRectMake(visCell.frame.origin.x, lastCell.frame.origin.y+lastCell.frame.size.height, visCell.frame.size.width, visCell.frame.size.height);
-            } else if (visCell == cell) {
-                // The current cell is the selected cell
-                // The next itteration of this loop will move on to the next cell
-                passed = YES;
-            }
-            lastCell = visCell;
-        }
+        // Move the table cells
+        [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
+            return CGRectMake(currentCell.frame.origin.x, previousCell.frame.origin.y+previousCell.frame.size.height, currentCell.frame.size.width, currentCell.frame.size.height);
+        }];
+        
         // Adjust the content size to compensate for the moving cells
         self.contentSize = self.originContentSize;
     };
     
+    // Create a block to fire after the cells have been moved
     void (^cellsMoved)(BOOL) = ^(BOOL finished) {
         // Finished updating cells
         [self endUpdates];
@@ -252,7 +260,6 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         moveCells();
         cellsMoved(YES);
     }
-    
 }
 
 #pragma mark Open
@@ -274,6 +281,9 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Call super to select the cell
     [super selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+    
+    // Set the current cell
+    self.currentCell = cell;
 }
 
 - (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
@@ -283,32 +293,39 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
-        //
-        BOOL passed = NO;
-        // Loop through the cells and move as needed
-        for (UITableViewCell *visCell in self.visibleCells) {
-            if (passed) {
-                visCell.frame = CGRectMake(visCell.frame.origin.x, visCell.frame.origin.y+distance, visCell.frame.size.width, visCell.frame.size.height);
-            } else {
-                if (visCell == cell) {
-                    passed = YES;
-                }
-            }
-        }
+        // Adjust the content size
+        self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
+        
+        // Move the table cells
+        [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
+            return CGRectMake(currentCell.frame.origin.x, currentCell.frame.origin.y+distance, currentCell.frame.size.width, currentCell.frame.size.height);
+        }];
     };
     
-    // Todo adjust header and footer to move with cells
+    // TODO adjust header and footer to move with cells
     
+    // Create a block to adjust the content offset and compensate if the view doesn't fit on screen (if the last cell is tapped, the view would be below the table and not be seen)
     void (^adjustContentOffset)(void) = ^{
         // Check if the content view fits on screen
         float contentEndY = self.currentContentView.bounds.size.height+self.currentContentView.frame.origin.y-self.contentOffset.y;
         if (contentEndY > self.bounds.size.height) {
-            // Doesn't fit on screen
+            // Doesn't fit on screen, Move the screen
             float difference = contentEndY - self.bounds.size.height;
-            // Move the screen
             [self setContentOffset:CGPointMake(self.contentOffset.x, self.contentOffset.y+difference) animated:animated];
         }
         self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
+    };
+    
+    // Create a block to fire after the cells have been moved
+    void (^cellsMoved)(BOOL) = ^(BOOL finished) {
+        // Adjust the content offset
+        adjustContentOffset();
+        
+        // Call the completion block
+        if (completion) completion(finished);
+        
+        // Delegate
+        [self.delegate accordionViewDidOpen:self];
     };
     
     self.originContentSize = self.contentSize;
@@ -316,28 +333,10 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     // Move the cells
     self.accordionIsOpen = YES;
     if (animated) {
-        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration animations:^{
-            // Adjust the content size
-            self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
-            // Move the cells
-            moveCells();
-        } completion:^(BOOL finished) {
-            // Adjust the content offset
-            adjustContentOffset();
-            if (completion) completion(finished);
-            // Delegate
-            [self.delegate accordionViewDidOpen:self];
-        }];
+        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration animations:moveCells completion:cellsMoved];
     } else {
-        // Move the cells
         moveCells();
-        // Adjust the content offset
-        adjustContentOffset();
-        // Completiom
-        self.accordionIsOpen = YES;
-        if (completion) completion(YES);
-        // Delegate
-        [self.delegate accordionViewDidOpen:self];
+        cellsMoved(YES);
     }
 }
 
