@@ -191,6 +191,45 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     }
 }
 
+- (BOOL)cellsFillScreen {
+    // Check if the table view is full of cells
+    if (CGRectGetHeight(self.bounds) < self.visibleCells.count*self.rowHeight) {
+        NSLog(@"cells do fill screen");
+        return true;
+    }
+    NSLog(@"cells do not fill screen");
+    return false;
+}
+
+- (void)animateContentViewMaskFromPath:(UIBezierPath *)fromPath toPath:(UIBezierPath *)toPath {
+    
+    // Add a mask to the view if there are not enough cells to create the animation
+    CAShapeLayer *mask = [CAShapeLayer layer];
+    mask.frame = CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds));
+    [self.currentContentView.layer setMask:mask];
+    
+    // Use a transaction to animate the mask
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:SMWAccordionTableViewAnimationDuration];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    
+    // Create a path animation for the mask
+    CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
+    pathAnimation.fromValue = (__bridge id)fromPath.CGPath;
+    pathAnimation.toValue = (__bridge id)toPath.CGPath;
+    
+    // Stop the animation from removing itself, it will be removed after the cells animations are complete
+    [pathAnimation setFillMode:kCAFillModeBoth];
+    [pathAnimation setRemovedOnCompletion:NO];
+    pathAnimation.delegate = self;
+    
+    // Add the animation to the mask
+    [mask addAnimation:pathAnimation forKey:nil];
+    
+    // Commit the animation
+    [CATransaction commit];
+}
+
 #pragma mark Close
 
 - (void)closeAccordionAnimated:(BOOL)aniamted {
@@ -204,7 +243,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 - (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
     // Move the cells back to their original positions (close the accordion)
     [self moveCellsBackToSelectedCell:self.currentCell animated:animated completion:^(BOOL finished) {
-        
+        NSLog(@"start completeion");
         // Desect the current row
         [super deselectRowAtIndexPath:[self indexPathForSelectedRow] animated:animated];
         
@@ -216,6 +255,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         
         // Perform the passed in completion block
         if (completion) completion(finished);
+        NSLog(@"end completeion");
     }];
 }
 
@@ -223,6 +263,19 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Delegate
     [self.delegate accordionViewWillClose:self];
+    
+    void (^animateMask)(void) = ^{
+        // Animate the view if there are not enough cells to create the animation
+        if (![self cellsFillScreen]) {
+            
+            // Setup the animation paths
+            UIBezierPath *toPath = [UIBezierPath bezierPathWithRect:CGRectMake(0.0, 0.0, CGRectGetWidth(self.currentContentView.bounds), 0.0)];
+            UIBezierPath *fromPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds))];
+            
+            // Animate the content view mask
+            [self animateContentViewMaskFromPath:fromPath toPath:toPath];
+        }
+    };
     
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
@@ -234,6 +287,8 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         
         // Adjust the content size to compensate for the moving cells
         self.contentSize = self.originContentSize;
+        
+        animateMask();
     };
     
     // Create a block to fire after the cells have been moved
@@ -243,18 +298,27 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         
         // Update properties
         self.accordionIsOpen = NO;
-        
+
         // Call the completion block
         if (completion) completion(finished);
         
         // Delegate
         [self.delegate accordionViewDidClose:self];
+        
+        // If a mask was used on teh current content view, remove it
+        if (self.currentContentView && self.currentContentView.layer.mask) {
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            [self.currentContentView.layer setMask:nil];
+            [CATransaction commit];
+        }
     };
     
     // Move the cells
     [self beginUpdates]; // Start updating cells
     if (animated) {
-        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration animations:moveCells completion:cellsMoved];
+        // Move the cells
+        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
     } else {
         // Move the cells without animating
         moveCells();
@@ -291,6 +355,19 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     // Delegate
     [self.delegate accordionViewWillOpen:self];
     
+    void (^animateMask)(void) = ^{
+        // Animate the view if there are not enough cells to create the animation
+        if (![self cellsFillScreen]) {
+            
+            // Setup the animation paths
+            UIBezierPath *fromPath = [UIBezierPath bezierPathWithRect:CGRectMake(0.0, 0.0, CGRectGetWidth(self.currentContentView.bounds), 0.0)];
+            UIBezierPath *toPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds))];
+            
+            // Animate the content view mask
+            [self animateContentViewMaskFromPath:fromPath toPath:toPath];
+        }
+    };
+    
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
         // Adjust the content size
@@ -300,6 +377,8 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
             return CGRectMake(currentCell.frame.origin.x, currentCell.frame.origin.y+distance, currentCell.frame.size.width, currentCell.frame.size.height);
         }];
+        
+        animateMask();
     };
     
     // TODO adjust header and footer to move with cells
@@ -326,6 +405,14 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         
         // Delegate
         [self.delegate accordionViewDidOpen:self];
+        
+        // If a mask was used on teh current content view, remove it
+        if (self.currentContentView && self.currentContentView.layer.mask) {
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            [self.currentContentView.layer setMask:nil];
+            [CATransaction commit];
+        }
     };
     
     self.originContentSize = self.contentSize;
@@ -333,7 +420,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     // Move the cells
     self.accordionIsOpen = YES;
     if (animated) {
-        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration animations:moveCells completion:cellsMoved];
+        [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
     } else {
         moveCells();
         cellsMoved(YES);
