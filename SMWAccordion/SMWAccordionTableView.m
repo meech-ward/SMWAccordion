@@ -114,7 +114,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     CGPoint selectedLocation = [touch locationInView:self.currentCell];
     
     // Check if the user selected a cell, or if the user touched the content view
-    if (selectedLocation.y > self.currentCell.frame.size.height && self.accordionIsOpen) {
+    if (self.currentCell && selectedLocation.y > CGRectGetHeight(self.currentCell.frame) && self.accordionIsOpen) {
         if (selectedLocation.y < self.currentCell.frame.size.height+contentHeight) {
             // Tapped the content view
             // Do nothing
@@ -128,6 +128,9 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Get the index path from the location
     NSIndexPath *indexPath = [super indexPathForRowAtPoint:location];
+    if (!indexPath) {
+        return;
+    }
     
     // Get cell from the index path
     UITableViewCell *nextCell = [self cellForRowAtIndexPath:indexPath];
