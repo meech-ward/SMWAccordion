@@ -14,25 +14,39 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 
 @property (strong, nonatomic) SMWAccordionTableViewDelegateObject *delegateObject;
 
-// The currently selected cell
+/**
+ The currently selected cell.
+ */
 @property (strong, nonatomic) UITableViewCell *currentCell;
-// The current content view being show, nil if no cells are selected
+
+/**
+ The current content view being show, nil if no cells are selected.
+ */
 @property (strong, nonatomic) UIView *currentContentView;
 
-// Keeps track of the index paths of the cells that are removed from the table view when they go off screen
-// One use of this is to determine if the last cell that was dealocated was from the top or the bottom of the table view
+/**
+ Keeps track of the index paths of the cells that are removed from the table view when they go off screen.
+ One use of this is to determine if the last cell that was dealocated was from the top or the bottom of the table view.
+ */
 @property (strong, nonatomic) NSMutableDictionary *removedIndexPaths;
 
-// Keeps track of the original contnet size, before any accordion content views are added
-// self.contentSize has to return to this value when the accordion is closed
+/** Keeps track of the original contnet size, before any accordion content views are added.
+ self.contentSize has to return to this value when the accordion is closed.
+ */
 @property (nonatomic) CGSize originContentSize;
 
-// Keeps track of whether the accordion is open (a cell is selected)
+/**
+ Keeps track of whether the accordion is open (a cell is selected).
+ */
 @property (nonatomic) BOOL accordionIsOpen;
 
 @end
 
 @implementation SMWAccordionTableView
+
+// Tell the compiler that UITableView will provide the implementation for the dataSource and delegate
+// UITableView will 'host' these properties and SMWAccordionTableView will use them
+@dynamic dataSource, delegate;
 
 #pragma mark - Setup
 
@@ -233,35 +247,42 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 }
 
 - (void)moveCells:(void(^)(void))moveCells animateMask:(void(^)(void (^)(void)))animateMask cellsMoved:(void(^)(BOOL))cellsMoved animated:(BOOL)animated cell:(UITableViewCell *)cell {
+    
     // Determine if the move is supposed to be animated
-    if (animated) {
-        if (![self cellsFillScreen]) {
-            
-            // Check if the last cell was selected
-            if (cell == [self.visibleCells lastObject]) {
-                // Last Cell
-                animateMask(^{cellsMoved(YES);});
-            } else {
-                // Not last cell
-                [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
-                animateMask(nil);
-            }
-        } else {
-            // Screen is full of cells
-            [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
-        }
-        
-    } else {
+    if (!animated) {
         // Move the cells without animating
         moveCells();
         cellsMoved(YES);
+        return;
     }
+
+    // Animate the content view mask
+    if (![self cellsFillScreen]) {
+        // There are not enough cells to fill the table view
+        // A mask has to be used to animate the content view
+        
+        // Check if the last cell was selected
+        if (cell == [self.visibleCells lastObject]) {
+            // Last Cell
+            // No cells below to move
+            // Animate the mask, then call the cells moved block
+            animateMask(^{cellsMoved(YES);});
+            return;
+        } else {
+            // Not last cell
+            // Animate the mask and move the cells
+            animateMask(nil);
+        }
+    }
+    
+    // Move the cells with an animation
+    [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
 }
 
 #pragma mark Close
 
-- (void)closeAccordionAnimated:(BOOL)aniamted {
-    [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:aniamted];
+- (void)closeAccordionAnimated:(BOOL)animated {
+    [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:animated];
 }
 
 - (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
@@ -316,15 +337,14 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         
         // Update properties
         self.accordionIsOpen = NO;
-
-        // Call the completion block
-        if (completion) completion(finished);
-        
-        // Delegate
-        [self.delegate accordionViewDidClose:self];
         
         // If a mask was used on teh current content view, remove it
         [self removeContentMask];
+
+        // Call the completion block
+        if (completion) completion(finished);
+        // Delegate
+        [self.delegate accordionViewDidClose:self];
     };
     
     // Move the cells
@@ -396,14 +416,13 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         // Adjust the content offset
         adjustContentOffset();
         
-        // Call the completion block
-        if (completion) completion(finished);
-        
-        // Delegate
-        [self.delegate accordionViewDidOpen:self];
-        
         // If a mask was used on the current content view, remove it
         [self removeContentMask];
+        
+        // Call the completion block
+        if (completion) completion(finished);
+        // Delegate
+        [self.delegate accordionViewDidOpen:self];
     };
     
     // Save the current (normal) content size
