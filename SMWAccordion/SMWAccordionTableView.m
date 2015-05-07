@@ -14,29 +14,34 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 
 @property (strong, nonatomic) SMWAccordionTableViewDelegateObject *delegateObject;
 
-/**
+/*
  The currently selected cell.
  */
 @property (strong, nonatomic) UITableViewCell *currentCell;
 
-/**
- The current content view being show, nil if no cells are selected.
+/*
+ The current content view being shown
+ This value is nil if no cells are selected.
  */
 @property (strong, nonatomic) UIView *currentContentView;
 
-/**
- Keeps track of the index paths of the cells that are removed from the table view when they go off screen.
+/*
+ The index paths of all the cells that are removed from screen when displaying the content view.
+ Keeps track of the index paths of the cells that are removed from the accordion view when they go off screen to make room for the content view.
  One use of this is to determine if the last cell that was dealocated was from the top or the bottom of the table view.
  */
 @property (strong, nonatomic) NSMutableDictionary *removedIndexPaths;
 
-/** Keeps track of the original contnet size, before any accordion content views are added.
- self.contentSize has to return to this value when the accordion is closed.
+/*
+ The content size of the accordion view before any content views are shown.
+ Keeps track of the original contnet size, before any accordion content views are shown.
+ This value is the same as self.contentSize when the accordion is closed.
  */
 @property (nonatomic) CGSize originContentSize;
 
-/**
- Keeps track of whether the accordion is open (a cell is selected).
+/*
+ A Boolean value that is keeps track of whether the accordion is open.
+ This value is true when a cell is selected and the content view is being show. This value is false when a cell is not selected and no content view is shown.
  */
 @property (nonatomic) BOOL accordionIsOpen;
 

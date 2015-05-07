@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "SMWAccordion"
-  s.version          = "1.0"
+  s.version          = "1.01"
   s.summary          = "An accordion for iOS that subclasses UITableView."
   s.description      = <<-DESC
   					   SMWAccordion is an Objective-C accordion library for iOS.
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.license          = 'MIT'
   s.author           = { "Sam Meech-Ward" => "sam@meech-ward.com" }
   s.source           = { :git => "https://github.com/meech-ward/SMWAccordion.git", :tag => s.version.to_s }
-
+  s.documentation_url = 'http://www.sammeechward.com/library/ios/documentation/SMWAccordion/'
   s.platform     = :ios, '5.0'
   s.requires_arc = true
 
