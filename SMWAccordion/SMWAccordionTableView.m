@@ -321,9 +321,16 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     // Delegate
     [self.delegate accordionViewWillClose:self];
     
+    // Create a block to animate a mask over the content view
+    // This will only be called if there are not enough cells to fill the table view
     void (^animateMask)(void (^)(void)) = ^(void (^completion)(void)) {
         // Animate the content view mask
         [self animateContentViewMaskFromPath:[self contentOpenPath] toPath:[self contentClosePath] completion:completion];
+    };
+    
+    // Create a block to adjust to the new content size
+    void (^adjustContentSize)(void) = ^{
+        self.contentSize = self.originContentSize;
     };
     
     // Create a block to move the cells
@@ -335,11 +342,15 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         }];
         
         // Adjust the content size to compensate for the moving cells
-        self.contentSize = self.originContentSize;
+        adjustContentSize();
     };
     
     // Create a block to fire after the cells have been moved
     void (^cellsMoved)(BOOL) = ^(BOOL finished) {
+        
+        // Make sure the content size is set
+        adjustContentSize();
+        
         // Finished updating cells
         [self endUpdates];
         
@@ -389,9 +400,16 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     // Delegate
     [self.delegate accordionViewWillOpen:self];
     
+    // Create a block to animate a mask over the content view
+    // This will only be called if there are not enough cells to fill the table view
     void (^animateMask)(void (^)(void)) = ^(void (^completion)(void)){
         // Animate the content view mask
         [self animateContentViewMaskFromPath:[self contentClosePath] toPath:[self contentOpenPath] completion:completion];
+    };
+    
+    // Create a block to adjust to the new content size
+    void (^adjustContentSize)(void) = ^{
+        self.contentSize = CGSizeMake(self.originContentSize.width, self.originContentSize.height+distance);
     };
     
     // Create a block to move the cells
@@ -403,7 +421,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         }];
         
         // Adjust the content size
-        self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
+        adjustContentSize();
     };
     
     // TODO adjust header and footer to move with cells
@@ -421,6 +439,10 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Create a block to fire after the cells have been moved
     void (^cellsMoved)(BOOL) = ^(BOOL finished) {
+        
+        // Make sure the content size is set
+        adjustContentSize();
+        
         // Adjust the content offset
         adjustContentOffset();
         
@@ -493,10 +515,10 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 - (BOOL)cellsFillScreen {
     // Check if the table view is full of cells
     if (CGRectGetHeight(self.bounds) < self.visibleCells.count*self.rowHeight) {
-        NSLog(@"cells do fill screen");
+//        NSLog(@"cells do fill screen");
         return true;
     }
-    NSLog(@"cells do not fill screen");
+//    NSLog(@"cells do not fill screen");
     return false;
 }
 
