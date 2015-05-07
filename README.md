@@ -6,7 +6,9 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
+## Documentation
+
+Check out the [documentation](http://www.sammeechward.com/library/ios/documentation/SMWAccordion/) for a comprehensive look at SMWAccordion.
 
 ## Installation
 
