@@ -8,22 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		22C76F4F1A5864EE00D1B35F /* SMWAccordion.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */; };
-		22C76F571A5864EE00D1B35F /* libSMWAccordion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */; };
 		22C76F731A58664F00D1B35F /* SMWAccordionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */; };
 		22C76F751A58669B00D1B35F /* SMWAccordionTableView.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */; };
 		22DC610E1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22DC610D1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.m */; };
 		22DC61121A59E67C00E3998F /* SMWAccordionTableViewDelegateObject.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 22DC610C1A59D34600E3998F /* SMWAccordionTableViewDelegateObject.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		22C76F581A5864EE00D1B35F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 22C76F431A5864EE00D1B35F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 22C76F4A1A5864EE00D1B35F;
-			remoteInfo = SMWAccordion;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		22C76F491A5864EE00D1B35F /* CopyFiles */ = {
@@ -43,7 +32,6 @@
 /* Begin PBXFileReference section */
 		22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSMWAccordion.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		22C76F4E1A5864EE00D1B35F /* SMWAccordion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMWAccordion.h; sourceTree = "<group>"; };
-		22C76F561A5864EE00D1B35F /* SMWAccordionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SMWAccordionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		22C76F5C1A5864EE00D1B35F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22C76F711A58664F00D1B35F /* SMWAccordionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMWAccordionTableView.h; sourceTree = "<group>"; };
 		22C76F721A58664F00D1B35F /* SMWAccordionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMWAccordionTableView.m; sourceTree = "<group>"; };
@@ -56,14 +44,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		22C76F531A5864EE00D1B35F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				22C76F571A5864EE00D1B35F /* libSMWAccordion.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +63,6 @@
 			isa = PBXGroup;
 			children = (
 				22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */,
-				22C76F561A5864EE00D1B35F /* SMWAccordionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,24 +115,6 @@
 			productReference = 22C76F4B1A5864EE00D1B35F /* libSMWAccordion.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		22C76F551A5864EE00D1B35F /* SMWAccordionTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 22C76F621A5864EE00D1B35F /* Build configuration list for PBXNativeTarget "SMWAccordionTests" */;
-			buildPhases = (
-				22C76F521A5864EE00D1B35F /* Sources */,
-				22C76F531A5864EE00D1B35F /* Frameworks */,
-				22C76F541A5864EE00D1B35F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				22C76F591A5864EE00D1B35F /* PBXTargetDependency */,
-			);
-			name = SMWAccordionTests;
-			productName = SMWAccordionTests;
-			productReference = 22C76F561A5864EE00D1B35F /* SMWAccordionTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -164,9 +125,6 @@
 				ORGANIZATIONNAME = "Sam Meech-Ward";
 				TargetAttributes = {
 					22C76F4A1A5864EE00D1B35F = {
-						CreatedOnToolsVersion = 6.1.1;
-					};
-					22C76F551A5864EE00D1B35F = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
 				};
@@ -184,20 +142,9 @@
 			projectRoot = "";
 			targets = (
 				22C76F4A1A5864EE00D1B35F /* SMWAccordion */,
-				22C76F551A5864EE00D1B35F /* SMWAccordionTests */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		22C76F541A5864EE00D1B35F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		22C76F471A5864EE00D1B35F /* Sources */ = {
@@ -209,22 +156,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		22C76F521A5864EE00D1B35F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		22C76F591A5864EE00D1B35F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 22C76F4A1A5864EE00D1B35F /* SMWAccordion */;
-			targetProxy = 22C76F581A5864EE00D1B35F /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		22C76F5D1A5864EE00D1B35F /* Debug */ = {
@@ -260,7 +192,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -294,7 +226,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -321,36 +253,6 @@
 			};
 			name = Release;
 		};
-		22C76F631A5864EE00D1B35F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = SMWAccordionTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		22C76F641A5864EE00D1B35F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = SMWAccordionTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -368,15 +270,6 @@
 			buildConfigurations = (
 				22C76F601A5864EE00D1B35F /* Debug */,
 				22C76F611A5864EE00D1B35F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		22C76F621A5864EE00D1B35F /* Build configuration list for PBXNativeTarget "SMWAccordionTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				22C76F631A5864EE00D1B35F /* Debug */,
-				22C76F641A5864EE00D1B35F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
