@@ -191,6 +191,13 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     }
 }
 
+- (void)adjustVisibleCellsUnderCell:(UITableViewCell *)cell y:(float (^)(UITableViewCell *currentCell, UITableViewCell *previousCell))getY {
+    // Similar to adjustVisibleCellsUnderCell:frame but uses some pre defined x, width, and height values
+    [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
+        return CGRectMake(CGRectGetMinX(currentCell.frame), getY(currentCell, previousCell), CGRectGetWidth(currentCell.bounds), CGRectGetHeight(currentCell.bounds));
+    }];
+}
+
 - (void)animateContentViewMaskFromPath:(UIBezierPath *)fromPath toPath:(UIBezierPath *)toPath completion:(void(^)(void))completion {
     
     // Add a mask to the view if there are not enough cells to create the animation
@@ -225,92 +232,9 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     [CATransaction commit];
 }
 
-#pragma mark Close
-
-- (void)closeAccordionAnimated:(BOOL)aniamted {
-    [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:aniamted];
-}
-
-- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
-    [self deselectRowAtIndexPath:indexPath animated:animated completion:nil];
-}
-
-- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
-    // Move the cells back to their original positions (close the accordion)
-    [self moveCellsBackToSelectedCell:self.currentCell animated:animated completion:^(BOOL finished) {
-        NSLog(@"start completeion");
-        // Desect the current row
-        [super deselectRowAtIndexPath:[self indexPathForSelectedRow] animated:animated];
-        
-        // Remove the content view
-        [self removeContentView];
-        
-        // Nil the current cell
-        self.currentCell = nil;
-        
-        // Perform the passed in completion block
-        if (completion) completion(finished);
-        NSLog(@"end completeion");
-    }];
-}
-
-- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
-    
-    // Delegate
-    [self.delegate accordionViewWillClose:self];
-    
-    void (^animateMask)(void (^)(void)) = ^(void (^completion)(void)) {
-        // Animate the view if there are not enough cells to create the animation
-        if (![self cellsFillScreen]) {
-            
-            // Setup the animation paths
-            UIBezierPath *toPath = [UIBezierPath bezierPathWithRect:CGRectMake(0.0, 0.0, CGRectGetWidth(self.currentContentView.bounds), 0.0)];
-            UIBezierPath *fromPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds))];
-            
-            // Animate the content view mask
-            [self animateContentViewMaskFromPath:fromPath toPath:toPath completion:completion];
-        }
-    };
-    
-    // Create a block to move the cells
-    void (^moveCells)(void) = ^{
-        
-        // Move the table cells
-        [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
-            return CGRectMake(currentCell.frame.origin.x, previousCell.frame.origin.y+previousCell.frame.size.height, currentCell.frame.size.width, currentCell.frame.size.height);
-        }];
-        
-        // Adjust the content size to compensate for the moving cells
-        self.contentSize = self.originContentSize;
-    };
-    
-    // Create a block to fire after the cells have been moved
-    void (^cellsMoved)(BOOL) = ^(BOOL finished) {
-        // Finished updating cells
-        [self endUpdates];
-        
-        // Update properties
-        self.accordionIsOpen = NO;
-
-        // Call the completion block
-        if (completion) completion(finished);
-        
-        // Delegate
-        [self.delegate accordionViewDidClose:self];
-        
-        // If a mask was used on teh current content view, remove it
-        if (animated && self.currentContentView && self.currentContentView.layer.mask) {
-            [CATransaction begin];
-            [CATransaction setDisableActions:YES];
-            [self.currentContentView.layer setMask:nil];
-            [CATransaction commit];
-        }
-    };
-    
-    // Move the cells
-    [self beginUpdates]; // Start updating cells
+- (void)moveCells:(void(^)(void))moveCells animateMask:(void(^)(void (^)(void)))animateMask cellsMoved:(void(^)(BOOL))cellsMoved animated:(BOOL)animated cell:(UITableViewCell *)cell {
+    // Determine if the move is supposed to be animated
     if (animated) {
-        
         if (![self cellsFillScreen]) {
             
             // Check if the last cell was selected
@@ -332,6 +256,80 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         moveCells();
         cellsMoved(YES);
     }
+}
+
+#pragma mark Close
+
+- (void)closeAccordionAnimated:(BOOL)aniamted {
+    [self deselectRowAtIndexPath:[self indexPathForCell:self.currentCell] animated:aniamted];
+}
+
+- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated {
+    [self deselectRowAtIndexPath:indexPath animated:animated completion:nil];
+}
+
+- (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+    // Move the cells back to their original positions (close the accordion)
+    [self moveCellsBackToSelectedCell:self.currentCell animated:animated completion:^(BOOL finished) {
+
+        // Desect the current row
+        [super deselectRowAtIndexPath:[self indexPathForSelectedRow] animated:animated];
+        
+        // Remove the content view
+        [self removeContentView];
+        
+        // Nil the current cell
+        self.currentCell = nil;
+        
+        // Perform the passed in completion block
+        if (completion) completion(finished);
+
+    }];
+}
+
+- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+    
+    // Delegate
+    [self.delegate accordionViewWillClose:self];
+    
+    void (^animateMask)(void (^)(void)) = ^(void (^completion)(void)) {
+        // Animate the content view mask
+        [self animateContentViewMaskFromPath:[self contentOpenPath] toPath:[self contentClosePath] completion:completion];
+    };
+    
+    // Create a block to move the cells
+    void (^moveCells)(void) = ^{
+        
+        // Move the table cells
+        [self adjustVisibleCellsUnderCell:cell y:^float(UITableViewCell *currentCell, UITableViewCell *previousCell) {
+            return CGRectGetMaxY(previousCell.frame);
+        }];
+        
+        // Adjust the content size to compensate for the moving cells
+        self.contentSize = self.originContentSize;
+    };
+    
+    // Create a block to fire after the cells have been moved
+    void (^cellsMoved)(BOOL) = ^(BOOL finished) {
+        // Finished updating cells
+        [self endUpdates];
+        
+        // Update properties
+        self.accordionIsOpen = NO;
+
+        // Call the completion block
+        if (completion) completion(finished);
+        
+        // Delegate
+        [self.delegate accordionViewDidClose:self];
+        
+        // If a mask was used on teh current content view, remove it
+        [self removeContentMask];
+    };
+    
+    // Move the cells
+    [self beginUpdates]; // Start updating cells
+    [self moveCells:moveCells animateMask:animateMask cellsMoved:cellsMoved animated:animated cell:cell];
 }
 
 #pragma mark Open
@@ -364,23 +362,20 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     [self.delegate accordionViewWillOpen:self];
     
     void (^animateMask)(void (^)(void)) = ^(void (^completion)(void)){
-        // Setup the animation paths
-        UIBezierPath *fromPath = [UIBezierPath bezierPathWithRect:CGRectMake(0.0, 0.0, CGRectGetWidth(self.currentContentView.bounds), 0.0)];
-        UIBezierPath *toPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds))];
-        
         // Animate the content view mask
-        [self animateContentViewMaskFromPath:fromPath toPath:toPath completion:completion];
+        [self animateContentViewMaskFromPath:[self contentClosePath] toPath:[self contentOpenPath] completion:completion];
     };
     
     // Create a block to move the cells
     void (^moveCells)(void) = ^{
-        // Adjust the content size
-        self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
         
         // Move the table cells
-        [self adjustVisibleCellsUnderCell:cell frame:^CGRect(UITableViewCell *currentCell, UITableViewCell *previousCell) {
-            return CGRectMake(currentCell.frame.origin.x, currentCell.frame.origin.y+distance, currentCell.frame.size.width, currentCell.frame.size.height);
+        [self adjustVisibleCellsUnderCell:cell y:^float(UITableViewCell *currentCell, UITableViewCell *previousCell) {
+            return CGRectGetMinY(currentCell.frame)+distance;
         }];
+        
+        // Adjust the content size
+        self.contentSize = CGSizeMake(self.contentSize.width, self.contentSize.height+distance);
     };
     
     // TODO adjust header and footer to move with cells
@@ -407,40 +402,16 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         // Delegate
         [self.delegate accordionViewDidOpen:self];
         
-        // If a mask was used on teh current content view, remove it
-        if (animated && self.currentContentView && self.currentContentView.layer.mask) {
-            [CATransaction begin];
-            [CATransaction setDisableActions:YES];
-            [self.currentContentView.layer setMask:nil];
-            [CATransaction commit];
-        }
+        // If a mask was used on the current content view, remove it
+        [self removeContentMask];
     };
     
+    // Save the current (normal) content size
     self.originContentSize = self.contentSize;
     
     // Move the cells
     self.accordionIsOpen = YES;
-    if (animated) {
-        if (![self cellsFillScreen]) {
-            
-            // Check if the last cell was selected
-            if (cell == [self.visibleCells lastObject]) {
-                // Last Cell
-                animateMask(^{cellsMoved(YES);});
-            } else {
-                // Not last cell
-                [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
-                animateMask(nil);
-            }
-        } else {
-            // Screen is full of cells
-            [UIView animateWithDuration:SMWAccordionTableViewAnimationDuration delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:moveCells completion:cellsMoved];
-        }
-        
-    } else {
-        moveCells();
-        cellsMoved(YES);
-    }
+    [self moveCells:moveCells animateMask:animateMask cellsMoved:cellsMoved animated:animated cell:cell];
 }
 
 #pragma mark - TableView delegate
@@ -500,6 +471,24 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     }
     NSLog(@"cells do not fill screen");
     return false;
+}
+
+- (void)removeContentMask {
+    // If a mask was used on the current content view, remove it
+    if (self.currentContentView && self.currentContentView.layer.mask) {
+        [CATransaction begin];
+        [CATransaction setDisableActions:YES];
+        [self.currentContentView.layer setMask:nil];
+        [CATransaction commit];
+    }
+}
+
+// The Paths that are used to mask the content view
+- (UIBezierPath *)contentClosePath {
+    return [UIBezierPath bezierPathWithRect:CGRectMake(0.0, 0.0, CGRectGetWidth(self.currentContentView.bounds), 0.0)];
+}
+- (UIBezierPath *)contentOpenPath {
+    return [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, CGRectGetWidth(self.currentContentView.bounds), CGRectGetHeight(self.currentContentView.bounds))];
 }
 
 @end
