@@ -1,0 +1,15 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'SMWAccordion_Example', :exclusive => true do
+  pod "SMWAccordion", :path => "../"
+end
+
+target 'SMWAccordion_Tests', :exclusive => true do
+  pod "SMWAccordion", :path => "../"
+
+  pod 'Specta'
+  pod 'Expecta'
+  pod 'FBSnapshotTestCase'
+  pod 'Expecta+Snapshots'
+end
