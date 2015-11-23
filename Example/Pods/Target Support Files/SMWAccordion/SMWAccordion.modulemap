@@ -1,0 +1,6 @@
+framework module SMWAccordion {
+  umbrella header "SMWAccordion-umbrella.h"
+
+  export *
+  module * { export * }
+}
