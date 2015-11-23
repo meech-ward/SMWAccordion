@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
  This is the same view that is returned by the 'contentViewForRowAtIndexPath' data source method.
  This value will be nil if no cells are selected.
  */
-@property (strong, nonatomic, readonly) UIView *currentContentView;
+@property (strong, nonatomic, readonly, nullable) UIView *currentContentView;
 
 
 /// @name Manually close the accordion view
