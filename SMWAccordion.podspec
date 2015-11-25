@@ -10,7 +10,7 @@
 Pod::Spec.new do |s|
 
 s.name             = "SMWAccordion"
-s.version          = "1.1.0"
+s.version          = "1.1.1"
 s.summary          = "An accordion for iOS that subclasses UITableView."
 s.description      = <<-DESC
 SMWAccordion is an Objective-C accordion library for iOS.
@@ -33,6 +33,6 @@ s.source_files = 'Pod/Classes/**/*'
 #}
 
 # s.public_header_files = 'Pod/Classes/**/*.h'
-# s.frameworks = 'UIKit', 'MapKit'
+s.frameworks = 'UIKit'
 # s.dependency 'AFNetworking', '~> 2.3'
 end
