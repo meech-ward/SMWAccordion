@@ -23,6 +23,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    self.accordionView.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -47,6 +48,26 @@
     UILabel *view = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_accordionView.bounds), 200.0)];
     view.text = [NSString stringWithFormat:@"Accordion View: %li", (long)indexPath.row];
     return view;
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+     NSLog(@"did de-select row");
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.textLabel.alpha = 1;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did select row");
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.textLabel.alpha = 0;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"will display cell:");
+}
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did un display cell:");
 }
 
 @end

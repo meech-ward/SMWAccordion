@@ -16,6 +16,7 @@
 
 // Override responds to selecter to return true if either the accordion view or delegate respond to the selector
 - (BOOL)respondsToSelector:(SEL)aSelector {
+
     if ([self.accordionView respondsToSelector:aSelector] || [self.delegate respondsToSelector:aSelector]) {
         return YES;
     }
@@ -42,6 +43,7 @@
         // Perform the selector on the accordion
         [anInvocation invokeWithTarget:self.accordionView];
     }
+    
     // Check if the delegate view has implemented the selector
     if ([self.delegate respondsToSelector:selector]) {
         // Perform the selector on the delegate

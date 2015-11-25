@@ -299,7 +299,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 
 - (void)deselectRowAtIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
     // Move the cells back to their original positions (close the accordion)
-    [self moveCellsBackToSelectedCell:self.currentCell animated:animated completion:^(BOOL finished) {
+    [self moveCellsBackToSelectedCell:self.currentCell atIndexPath:[self indexPathForCell:self.currentCell] animated:animated completion:^(BOOL finished) {
 
         // Desect the current row
         [super deselectRowAtIndexPath:[self indexPathForSelectedRow] animated:animated];
@@ -317,10 +317,11 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     }];
 }
 
-- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+- (void)moveCellsBackToSelectedCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
     
     // Delegate
     [self.delegate accordionViewWillClose:self];
+    [self.delegate accordionView:self willCloseCell:cell forRowAtIndexPath:indexPath];
     
     // Create a block to animate a mask over the content view
     // This will only be called if there are not enough cells to fill the table view
@@ -365,6 +366,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         if (completion) completion(finished);
         // Delegate
         [self.delegate accordionViewDidClose:self];
+        [self.delegate accordionView:self didCloseCell:cell forRowAtIndexPath:indexPath];
     };
     
     // Move the cells
@@ -387,7 +389,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Show the content view
     // Move the cells to show the content view
-    [self moveCellsFromSelectedCell:cell distance:contentHeight animated:animated completion:nil];
+    [self moveCellsFromSelectedCell:cell atIndexPath:indexPath distance:contentHeight animated:animated completion:nil];
     
     // Call super to select the cell
     [super selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
@@ -397,10 +399,11 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     self.currentCell = cell;
 }
 
-- (void)moveCellsFromSelectedCell:(UITableViewCell *)cell distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
+- (void)moveCellsFromSelectedCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath distance:(float)distance animated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
     
     // Delegate
     [self.delegate accordionViewWillOpen:self];
+    [self.delegate accordionView:self willOpenCell:cell forRowAtIndexPath:indexPath];
     
     // Create a block to animate a mask over the content view
     // This will only be called if there are not enough cells to fill the table view
@@ -455,6 +458,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
         if (completion) completion(finished);
         // Delegate
         [self.delegate accordionViewDidOpen:self];
+        [self.delegate accordionView:self didOpenCell:cell forRowAtIndexPath:indexPath];
     };
     
     // Save the current (normal) content size
@@ -468,7 +472,6 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 #pragma mark - TableView delegate
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"will display accordion cell:");
     if (self.currentCell) {
         // Get the index path of the currently selected row
         NSIndexPath *selectedIndexPath = [self indexPathForCell:self.currentCell];
@@ -483,7 +486,6 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"did un display accordion cell:");
     // Check if the cell was dismissed off the top or bottom
     NSIndexPath *lastPath = [self.removedIndexPaths objectForKey:[NSNumber numberWithInteger:indexPath.section]];
     if (!lastPath) lastPath = [NSIndexPath indexPathForRow:-1 inSection:indexPath.section];

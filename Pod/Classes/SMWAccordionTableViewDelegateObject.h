@@ -34,7 +34,17 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called when a user deselects a row.
  @param accordionView The SMWAccordionView object informing the delegate about the impending close.
  */
-- (void)accordionViewWillClose:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewWillClose:(SMWAccordionTableView *)accordionView __deprecated;
+
+/**
+ Tells the delegate that the accordionView is about to close.
+ 
+ This method is called when a user deselects a row.
+ @param accordionView The SMWAccordionView object informing the delegate about the impending close.
+ @param cell The cell that is currently open and will close.
+ @param indexPath An index path locating the row in the accordion view.
+ */
+- (void)accordionView:(SMWAccordionTableView *)accordionView willCloseCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  Tells the delegate that the accordionView is now closed.
@@ -42,8 +52,17 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called after [accordionViewWillClose:].
  @param accordionView The SMWAccordionView object informing the delegate about being closed.
  */
-- (void)accordionViewDidClose:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewDidClose:(SMWAccordionTableView *)accordionView __deprecated;
 
+/**
+ Tells the delegate that the accordionView is now closed.
+ 
+ This method is called after [accordionViewWillClose:].
+ @param accordionView The SMWAccordionView object informing the delegate about being closed.
+ @param cell The cell that was open and just finished closing.
+ @param indexPath An index path locating the row in the accordion view.
+ */
+- (void)accordionView:(SMWAccordionTableView *)accordionView didCloseCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  Tells the delegate that the accordionView is about to open.
@@ -51,7 +70,17 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called when a user selects a row.
  @param accordionView The SMWAccordionView object informing the delegate about the impending open.
  */
-- (void)accordionViewWillOpen:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewWillOpen:(SMWAccordionTableView *)accordionView __deprecated;
+
+/**
+ Tells the delegate that the accordionView is about to open.
+ 
+ This method is called when a user selects a row.
+ @param accordionView The SMWAccordionView object informing the delegate about the impending open.
+ @param cell The cell that is about to be opened.
+ @param indexPath An index path locating the row in the accordion view.
+ */
+- (void)accordionView:(SMWAccordionTableView *)accordionView willOpenCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 /**
  Tells the delegate that the accordionView is now open.
@@ -59,7 +88,17 @@ NS_ASSUME_NONNULL_BEGIN
  This method is called after [accordionViewWillOpen:].
  @param accordionView The SMWAccordionView object informing the delegate about being open.
  */
-- (void)accordionViewDidOpen:(SMWAccordionTableView *)accordionView;
+- (void)accordionViewDidOpen:(SMWAccordionTableView *)accordionView __deprecated;
+
+/**
+ Tells the delegate that the accordionView is now open.
+ 
+ This method is called after [accordionViewWillOpen:].
+ @param accordionView The SMWAccordionView object informing the delegate about being open.
+ @param cell The cell that was just opened.
+ @param indexPath An index path locating the row in the accordion view.
+ */
+- (void)accordionView:(SMWAccordionTableView *)accordionView didOpenCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
