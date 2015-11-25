@@ -303,6 +303,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 
         // Desect the current row
         [super deselectRowAtIndexPath:[self indexPathForSelectedRow] animated:animated];
+        [self.delegate tableView:self didDeselectRowAtIndexPath:indexPath];
         
         // Remove the content view
         [self removeContentView];
@@ -390,6 +391,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
     
     // Call super to select the cell
     [super selectRowAtIndexPath:indexPath animated:animated scrollPosition:UITableViewScrollPositionNone];
+    [self.delegate tableView:self didSelectRowAtIndexPath:indexPath];
     
     // Set the current cell
     self.currentCell = cell;
@@ -466,6 +468,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 #pragma mark - TableView delegate
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"will display accordion cell:");
     if (self.currentCell) {
         // Get the index path of the currently selected row
         NSIndexPath *selectedIndexPath = [self indexPathForCell:self.currentCell];
@@ -480,6 +483,7 @@ static const float SMWAccordionTableViewAnimationDuration = 0.3;
 }
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"did un display accordion cell:");
     // Check if the cell was dismissed off the top or bottom
     NSIndexPath *lastPath = [self.removedIndexPaths objectForKey:[NSNumber numberWithInteger:indexPath.section]];
     if (!lastPath) lastPath = [NSIndexPath indexPathForRow:-1 inSection:indexPath.section];
